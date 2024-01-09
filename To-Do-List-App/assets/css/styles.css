@@ -28,6 +28,17 @@ input {
     padding: 5px;
 }
 
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.active {
+    background-color: #ebebeb;
+    color: #4f4f4f;
+}
+
+/*--------------------------------------------------------------*/
 
 /* Navbar */
 .navbar {
@@ -95,7 +106,7 @@ input {
     align-items: center;
 }
 
-/* Section Center */
+/* Section Center StickyWall */
 .tasks {
     padding: 15px;
 }
@@ -119,6 +130,7 @@ input {
 .item-task {
     padding: 20px;
     height: 260px;
+    margin: 5px;
 }
 
 .add-task {
@@ -128,4 +140,17 @@ input {
     align-items: center; 
     justify-content: center;
     grid-column-start: 1;
+}
+
+/*--------------------------------------------------------------*/
+/*-------------------------Upcoming Page-----------------------------------*/
+
+.container {
+    display: grid;
+    padding: 25px;
+    grid-template-columns: repeat(3,260px);
+}
+
+.section-title {
+    padding: 25px;
 }
