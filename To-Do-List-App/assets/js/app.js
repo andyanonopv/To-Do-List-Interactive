@@ -3,7 +3,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const taskContainer = document.querySelector('.task-container');
     //const addTaskContainer = document.querySelector('.add-task');
     const addTaskBtn = document.querySelector('.task');
+    const taskCount = document.getElementById('taskCount');
 
+    let taskCounter = 0;
     let taskIndex = 1;
 
     addTaskBtn.addEventListener('click', function () {
@@ -69,21 +71,19 @@ document.addEventListener('DOMContentLoaded', function () {
                     <p>${textValue}</p>
                 </div>
             `;
-            
+            taskCounter++;
+            taskCount.textContent = taskCounter;
             // Append the new task item to the taskContainer
             taskContainer.insertBefore(newTaskItem, taskContainer.querySelector('.add-task').nextSibling);
 
-            for(let i = 0; i < taskContainer.children.length; i++) {
-                const item = taskContainer.children[i];
-                item.style.gridColumn = `${(i % 2) + 1}`;
-                item.style.gridRowStart = `${Math.floor(i / 2) + 1}`;
-            }
+            
 
             // Remove the overlay and container when submit button is clicked
             body.removeChild(overlay);
             body.removeChild(container);
         });
-
+        
+        console.log(taskCounter);
         // Append elements to the container
         container.appendChild(closeBtn);
         container.appendChild(titleElem);
