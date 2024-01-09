@@ -4,11 +4,128 @@
     margin: 0;
     padding: 0;
 }
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+
+hr {
+    margin-bottom: 10px;
+}
+
+body {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    height: 100vh;
+    background-color: #fafafa;
+    font-family: 'Ubuntu', sans-serif;
+}
+
+i {
+    padding: 5px;
+}
+
+input {
+    background-color: #f4f4f4;
+    color: #505050;
+    border: 3px solid #f0f0f0;
+    padding: 5px;
+}
+
+
+/* Navbar */
+.navbar {
+    display: flex;
+    flex-direction: column;
+    height: 96vh;
+    padding: 20px;
+    margin: 15px;
+    background-color: #f4f4f4;
+    border-radius: 5px;
+    justify-content: space-between;
+}
+
+.tasks-details,.list-details,
+.tag-details {
+    padding-bottom: 15px;
+}
+
+.top-menu {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 30px;
+}
+.menu-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 10px;
+}
+.task-details{
+    display: flex;
+}
+.task-details-items {
+    display: flex;
+    flex-direction: column;
+}
+.task-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px;
+}
+
+.task-add {
+    padding: 5px;
+}
+
+.task-left {
+    display: flex;
+    align-items: center;
+}
+.tag-details {
+    display: flex;
+    flex-direction: column;
+}
+.tag-container {
+    display: flex;
+}
+
+.tag-item {
+    padding: 5px;
+}
+
+.settings-item {
+    display: flex;
+    align-items: center;
+}
+
+/* Section Center */
+.tasks {
     padding: 15px;
+}
+
+.headline {
+    color: #505050;
+    font-weight: 600;
+}
+
+.task-container {
+    display: grid;
+    grid-template-columns: minmax(260px,1fr) minmax(260px,1fr) minmax(260px,1fr);
+    border: 3px solid #ededed;
+    border-radius: 10px;
+    padding: 15px;
+    position: relative;
+    z-index: 0;
+}
+
+
+.item-task {
+    padding: 20px;
+    height: 260px;
+}
+
+.add-task {
+    background-color: #ebebeb; 
+    font-size: 3rem; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    grid-column-start: 1;
 }
