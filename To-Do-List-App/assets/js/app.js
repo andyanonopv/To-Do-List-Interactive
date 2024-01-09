@@ -8,10 +8,6 @@ document.addEventListener('DOMContentLoaded', function () {
     let taskCounter = parseInt(localStorage.getItem('taskCounter')) || 0;
     let taskData = JSON.parse(localStorage.getItem('taskData')) || [];
 
-    let taskIndex = 1;
-
-    
-
     function StickyWall() {
         function getRandomColor() {
             const colorsArr = [
@@ -36,6 +32,20 @@ document.addEventListener('DOMContentLoaded', function () {
             localStorage.setItem('taskData', JSON.stringify(taskData));
         }
 
+        function appendTaskToUpcoming(task) {
+            const upcomingTasksContainer = document.getElementById('upcomingTasksContainer');
+            if (upcomingTasksContainer) {
+                const newTask = document.createElement('div');
+                newTask.classList.add('item-task');
+                newTask.innerHTML = `
+                    <h1 class="title">${task.title}</h1>
+                    <div class="text">
+                        <p>${task.text}</p>
+                    </div>
+                `;
+                upcomingTasksContainer.appendChild(newTask);
+            }
+        }
 
         addTaskBtn.addEventListener('click', function () {
             const overlay = document.createElement('div');
@@ -101,62 +111,31 @@ document.addEventListener('DOMContentLoaded', function () {
                
 
                 const newTaskItem = document.createElement('div');
-                newTaskItem.classList.add('item-task');
+                newTaskItem.classList.add('item-task'); 
                 newTaskItem.style.backgroundColor = getRandomColor();
     
                 const titleValue = titleElem.value;
                 const textValue = textElem.value;
                 const dateValue = dateElem.value    
 
+
                 const dueDate = new Date(dateValue);
                 const today = new Date();
+                
 
-                if (dueDate > today) {
-                    // If the due date is in the future, add it to the upcoming tasks
-                    $.get('http://127.0.0.1:5500/To-Do-List-Interactive/To-Do-List-App/upcoming.html', function (response) {
-                        const upcomingContent = $(response).find('.center-section');
-            
-                        const upcomingTitle = upcomingContent.find('.section-title');
-                        const upcomingContainer = upcomingContent.find('.container');
-            
-                        if (upcomingTitle.length > 0 && upcomingContainer.length > 0) {
-                            const newUpcomingTask = $('<div class="item-task"></div>');
-                            newUpcomingTask.css('background-color', getRandomColor());
-                            newUpcomingTask.html(`
-                                <h1 class="title">${titleValue}</h1>
-                                <div class="text">
-                                    <p>${textValue}</p>
-                                </div>
-                            `);
-            
-                            upcomingContainer.append(newUpcomingTask);
-            
-                            const task = {
-                                title: titleValue,
-                                text: textValue,
-                                date: dateValue,
-                            };
-            
-                            const storedTasks = JSON.parse(localStorage.getItem('upcomingTasks')) || [];
-                            storedTasks.push(task);
-                            localStorage.setItem('upcomingTasks', JSON.stringify(storedTasks));
-                        } else {
-                            console.error("Upcoming elements not found!");
-                        }
-                    }).fail(function () {
-                        console.error("Error fetching or handling upcoming.html");
-                    });
-                }
-        
-
+                
                 const task = {
-                    title: titleValue,
-                    text: textValue,
-                    date: dateValue,
-                };
-        
-                taskData.push(task);
+                        title: titleValue,
+                        text: textValue,
+                        date: dateValue,
+                    };
     
+                appendTaskToUpcoming(task);
+            
+
+                
+                taskData.push(task);
+
                 newTaskItem.innerHTML = `
                     <h1 class="title">${titleValue}</h1>
                     <div class="text">
@@ -175,7 +154,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 body.removeChild(container);
             });
             
-            console.log(taskCounter);
+            
             // Append elements to the container
             container.appendChild(closeBtn);
             container.appendChild(titleElem);
@@ -200,8 +179,8 @@ document.addEventListener('DOMContentLoaded', function () {
     upComing();
     
     //For now (To Be Updated)
-    window.addEventListener('beforeunload', function () {
-        // Clear local storage when the page is refreshed or closed
-        localStorage.clear();
-    });
+    // window.addEventListener('beforeunload', function () {
+    //     // Clear local storage when the page is refreshed or closed
+    //     localStorage.clear();
+    // });
 });
