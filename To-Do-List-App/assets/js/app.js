@@ -4,10 +4,13 @@ document.addEventListener('DOMContentLoaded', function () {
     //const addTaskContainer = document.querySelector('.add-task');
     const addTaskBtn = document.querySelector('.task');
     const taskCount = document.getElementById('taskCount');
-    console.log(taskCount);
 
     let taskCounter = parseInt(localStorage.getItem('taskCounter')) || 0;
+    let taskData = JSON.parse(localStorage.getItem('taskData')) || [];
+
     let taskIndex = 1;
+
+    
 
     function StickyWall() {
         function getRandomColor() {
@@ -30,6 +33,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     localStorage.setItem('taskCounter', taskCounter.toString());
                 }
             }
+            localStorage.setItem('taskData', JSON.stringify(taskData));
         }
 
 
@@ -78,7 +82,12 @@ document.addEventListener('DOMContentLoaded', function () {
             textElem.placeholder = 'Task Details';
             textElem.style.marginBottom = '15px';
             textElem.style.height = '100px';
-    
+            const dateLabel = document.createElement('label');
+            dateLabel.for = '#date';
+            dateLabel.textContent = 'Optional';
+            const dateElem = document.createElement('input');
+            dateElem.type = 'date';
+            dateElem.id = '#date';
     
             const titleValue = titleElem.value;
             const textValue = textElem.value;
@@ -97,6 +106,23 @@ document.addEventListener('DOMContentLoaded', function () {
     
                 const titleValue = titleElem.value;
                 const textValue = textElem.value;
+                const dateValue = dateElem.value
+
+                const dueDate = new Date(dateValue);
+                const today = new Date();
+
+                if (dueDate > today) {
+                    // If yes, add it to the upcoming tasks
+                    displayUpcomingTasks();
+                }
+
+                const task = {
+                    title: titleValue,
+                    text: textValue,
+                    date: dateValue,
+                };
+        
+                taskData.push(task);
     
                 newTaskItem.innerHTML = `
                     <h1 class="title">${titleValue}</h1>
@@ -121,6 +147,8 @@ document.addEventListener('DOMContentLoaded', function () {
             container.appendChild(closeBtn);
             container.appendChild(titleElem);
             container.appendChild(textElem);
+            container.appendChild(dateLabel);
+            container.appendChild(dateElem);
             container.appendChild(submitBtn);
     
     
@@ -128,10 +156,39 @@ document.addEventListener('DOMContentLoaded', function () {
             body.appendChild(overlay);
             body.appendChild(container)
         });
-        // updateTaskCount();
+         updateTaskCount();
     }
-    
-    StickyWall();
+
+    function displayUpcomingTasks() {
+        const today = new Date().toISOString().split('T')[0];
+        const upcomingTasks = taskData.filter(task => task.date > today);
+
+        const upcomingContainer = document.querySelector('.container'); 
+
+        // Clear previous tasks
+
+        upcomingTasks.forEach(task => {
+            const newTaskItem = document.createElement('div');
+            newTaskItem.classList.add('item-task');
+            newTaskItem.style.backgroundColor = getRandomColor();
+            
+            newTaskItem.innerHTML = `
+                <h1 class="title">${task.title}</h1>
+                <div class="text">
+                    <p>${task.text}</p>
+                </div>
+            `;
+
+            upcomingContainer.appendChild(newTaskItem);
+        });
+    }
+
+    function upComing() {
+        displayUpcomingTasks();
+        StickyWall();
+    }
+
+    upComing();
     
     //For now (To Be Updated)
     window.addEventListener('beforeunload', function () {
