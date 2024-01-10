@@ -1,5 +1,11 @@
+window.onload = function () {
+    let container = document.getElementById("upcomingTasksContainer");
+    // console.log(container);
+};
+
 document.addEventListener('DOMContentLoaded', function () {
     const body = document.body;
+    console.log(body);
     const taskContainer = document.querySelector('.task-container');
     //const addTaskContainer = document.querySelector('.add-task');
     const addTaskBtn = document.querySelector('.task');
