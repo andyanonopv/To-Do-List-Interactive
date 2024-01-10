@@ -13,9 +13,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     let taskCounter = parseInt(localStorage.getItem('taskCounter')) || 0;
     let taskData = JSON.parse(localStorage.getItem('taskData')) || [];
-
-    function StickyWall() {
-        function getRandomColor() {
+    
+    const textContainer = document.querySelector('.container');
+    
+    function getRandomColor() {
             const colorsArr = [
                 '#e57373', '#81c784', '#64b5f6', '#ffb74d', '#aed581',
                 '#90a4ae', '#ff8a65', '#4db6ac', '#ba68c8', '#fff176',
@@ -24,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function () {
             return colorsArr[randomIndex];
         }
         
-        function updateTaskCount() {
+    function updateTaskCount() {
             if (taskCount) {
                 taskCount.textContent = taskCounter;
                 localStorage.setItem('taskCounter', taskCounter.toString());
@@ -38,22 +39,24 @@ document.addEventListener('DOMContentLoaded', function () {
             localStorage.setItem('taskData', JSON.stringify(taskData));
         }
 
-        function appendTaskToUpcoming(task) {
-            const upcomingTasksContainer = document.getElementById('upcomingTasksContainer');
-            if (upcomingTasksContainer) {
-                const newTask = document.createElement('div');
-                newTask.classList.add('item-task');
-                newTask.innerHTML = `
-                    <h1 class="title">${task.title}</h1>
-                    <div class="text">
-                        <p>${task.text}</p>
-                    </div>
-                `;
-                upcomingTasksContainer.appendChild(newTask);
-            }
+    function appendTaskToContainer(task) {
+            const newTaskItem = document.createElement('div');
+            newTaskItem.classList.add('item-task');
+            newTaskItem.style.backgroundColor = getRandomColor();
+            newTaskItem.innerHTML = `
+                <h1 class="title">${task.title}</h1>
+                <div class="text">
+                    <p>${task.text}</p>
+                </div>
+            `;
+            taskContainer.appendChild(newTaskItem);
         }
 
-        addTaskBtn.addEventListener('click', function () {
+    for (let i = 0; i < taskData.length; i++) {
+            appendTaskToContainer(taskData[i]);
+        }
+
+    addTaskBtn.addEventListener('click', function () {
             const overlay = document.createElement('div');
             overlay.style.position = 'fixed';
             overlay.style.top = '0';
@@ -124,34 +127,34 @@ document.addEventListener('DOMContentLoaded', function () {
                 const textValue = textElem.value;
                 const dateValue = dateElem.value    
 
-
-                const dueDate = new Date(dateValue);
-                const today = new Date();
-                
-
                 
                 const task = {
                         title: titleValue,
                         text: textValue,
                         date: dateValue,
                     };
-    
-                appendTaskToUpcoming(task);
+                
+                //appendTaskToUpcoming(task);
             
-
+                
                 
                 taskData.push(task);
-
-                newTaskItem.innerHTML = `
-                    <h1 class="title">${titleValue}</h1>
+                
+                for(let i = 0; i< taskCounter;i++) {
+                    newTaskItem.innerHTML = `
+                    <h1 class="title">${taskData[i].title}</h1>
                     <div class="text">
-                        <p>${textValue}</p>
+                        <p>${taskData[i].text}</p>
                     </div>
                 `;
+                }
+                
                 taskCounter++;
                 updateTaskCount();
+
+                appendTaskToContainer(task);
                 // Append the new task item to the taskContainer
-                taskContainer.insertBefore(newTaskItem, taskContainer.querySelector('.add-task').nextSibling);
+                taskContainer.append(newTaskItem);
     
                 
     
@@ -175,14 +178,12 @@ document.addEventListener('DOMContentLoaded', function () {
             body.appendChild(container)
         });
          updateTaskCount();
-    }
+    
 
 
-    function upComing() {
-        StickyWall();
-    }
+    
 
-    upComing();
+    
     
     //For now (To Be Updated)
     // window.addEventListener('beforeunload', function () {
