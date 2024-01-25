@@ -1,14 +1,14 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const body = document.body;
     const taskContainer = document.querySelector('.task-container');
     const taskTodayContainer = document.querySelector('#todayTasksContainer');
 
-    const addTaskBtn = document.querySelector('.task');
+    console.log(taskTodayContainer);
+
     const taskCount = document.getElementById('taskCount');
 
     let taskCounter = parseInt(localStorage.getItem('taskCounter')) || 0;
     let taskData = JSON.parse(localStorage.getItem('taskData')) || [];
-    
+    console.log(taskData);
     
     
     function getRandomColor() {
@@ -36,162 +36,136 @@ document.addEventListener('DOMContentLoaded', function () {
 
     
 
-        function appendTaskToContainer(task) {
-            const today = new Date();
-            let formattedToday = today.getFullYear() + '-' + 
-                                 ('0' + (today.getMonth() + 1)).slice(-2) + '-' + 
-                                 ('0' + today.getDate()).slice(-2);
-        
-            if (task.date !== formattedToday) { // Only append if it's not today's task
-                const newTaskItem = document.createElement('div');
-                newTaskItem.classList.add('item-task');
-                newTaskItem.style.backgroundColor = getRandomColor();
-                newTaskItem.innerHTML = `
-                    <h1 class="title">${task.title}</h1>
-                    <div class="text">
-                        <p>${task.text}</p>
-                    </div>
+    function appendTaskToContainer(task) {                     
+            const newTaskItem = document.createElement('div');
+            newTaskItem.classList.add('item-task');
+            newTaskItem.style.backgroundColor = getRandomColor();
+            newTaskItem.innerHTML = `
+                <h1 class="title">${task.title}</h1>
+                <div class="text">
+                <p>${task.text}</p>
+                </div>
                 `;
-                taskContainer.appendChild(newTaskItem);
-            }
+            taskContainer.appendChild(newTaskItem);
         }
-        
-        function loadAndDisplayTodaysTasks(task) {
+    
+        function loadTodayTask() {
             const today = new Date();
             let formattedToday = today.getFullYear() + '-' + 
-                                   ('0' + (today.getMonth() + 1)).slice(-2) + '-' + 
-                                   ('0' + today.getDate()).slice(-2);
+                ('0' + (today.getMonth() + 1)).slice(-2) + '-' + 
+                ('0' + today.getDate()).slice(-2);
         
-            if (task.date === formattedToday) {
-                    const newTaskItem = document.createElement('div');
-                    newTaskItem.classList.add('item-task');
-                    newTaskItem.style.backgroundColor = getRandomColor();
-                    newTaskItem.innerHTML = `
+            console.log('Formatted Today:', formattedToday); // Debugging
+            console.log('Loaded taskData:', taskData); // Debugging
+        
+            taskData.forEach(function(task) {
+                console.log('Processing Task:', task); // Debugging
+                if (task.date === formattedToday) {
+                    const newTaskItemToday = document.createElement('div');
+                    newTaskItemToday.classList.add('item-task');
+                    newTaskItemToday.style.backgroundColor = getRandomColor();
+                    newTaskItemToday.innerHTML = `
                         <h1 class="title">${task.title}</h1>
                         <div class="text">
-                            <p>${task.text}</p>
-                        </div>
-                    `;
-                    console.log(newTaskItem);
-                    taskTodayContainer.appendChild(newTaskItem);
-            }
+                        <p>${task.text}</p>
+                        </div>`;
+                    taskTodayContainer.appendChild(newTaskItemToday);
+                    console.log('Task added to today container'); // Debugging
+                }
+            });
+        
+            console.log('taskTodayContainer after appending:', taskTodayContainer); // Debugging
         }
         
-    
-    for (let i = 0; i < taskData.length; i++) {
-            appendTaskToContainer(taskData[i]);
-            loadAndDisplayTodaysTasks(taskData[i]);
-    }
+        
 
-    addTaskBtn.addEventListener('click', function () {
-            const overlay = document.createElement('div');
-            overlay.style.position = 'fixed';
-            overlay.style.top = '0';
-            overlay.style.left = '0';
-            overlay.style.width = '100%';
-            overlay.style.height = '100%';
-            overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.1)'; // Semi-transparent black
-            overlay.style.zIndex = '2';
+
+    function createAddTaskModal() {
+        // Create overlay
+        const overlay = document.createElement('div');
+        overlay.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.1); z-index: 2;';
     
-            // Create a container div
-            const container = document.createElement('div');
-            container.style.zIndex = '3';
-            container.style.padding = '25px';
-            container.style.position = 'fixed'; // Use fixed position for centering
-            container.style.top = '50%';
-            container.style.left = '50%';
-            container.style.transform = 'translate(-50%, -50%)'; // Center the div
-            container.style.display = 'flex';
-            container.style.flexDirection = 'column';
-            container.style.backgroundColor = '#fff';
-            container.style.width = '50vw';
-            container.style.height = '50vh';
+        // Create container
+        const container = document.createElement('div');
+        container.style.cssText = 'z-index: 3; padding: 25px; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; background-color: #fff; width: 50vw; height: 50vh;';
     
-            // Create a close button
-            const closeBtn = document.createElement('button');
-            closeBtn.textContent = 'Close';
-            closeBtn.style.width = '150px';
-            closeBtn.style.margin = '0 auto';
-            closeBtn.addEventListener('click', function () {
-                // Remove the container when close button is clicked
-                body.removeChild(overlay);
-                body.removeChild(container);
-            });
+        // Create close button
+        const closeBtn = document.createElement('button');
+        closeBtn.textContent = 'Close';
+        closeBtn.style.cssText = 'width: 150px; margin: 0 auto;';
+        closeBtn.addEventListener('click', function () {
+            document.body.removeChild(overlay);
+            document.body.removeChild(container);
+        });
     
-            // Create input elements
-            const titleElem = document.createElement('input');
-            titleElem.type = 'text';
-            titleElem.placeholder = 'Task Title';
-            titleElem.style.marginBottom = '15px';
-            titleElem.style.marginTop = '15px';
-            const textElem = document.createElement('textarea');
-            textElem.placeholder = 'Task Details';
-            textElem.style.marginBottom = '15px';
-            textElem.style.height = '100px';
-            const dateLabel = document.createElement('label');
-            dateLabel.for = '#date';
-            dateLabel.textContent = 'Optional';
-            const dateElem = document.createElement('input');
-            dateElem.type = 'date';
-            dateElem.id = 'date';
+        // Create input elements
+        const titleElem = document.createElement('input');
+        titleElem.type = 'text';
+        titleElem.placeholder = 'Task Title';
+        titleElem.style.cssText = 'margin-bottom: 15px; margin-top: 15px;';
     
+        const textElem = document.createElement('textarea');
+        textElem.placeholder = 'Task Details';
+        textElem.style.cssText = 'margin-bottom: 15px; height: 100px;';
+    
+        const dateLabel = document.createElement('label');
+        dateLabel.for = '#date';
+        dateLabel.textContent = 'Optional';
+    
+        const dateElem = document.createElement('input');
+        dateElem.type = 'date';
+        dateElem.id = 'date';
+    
+        // Create submit button
+        const submitBtn = document.createElement('button');
+        submitBtn.textContent = 'Submit';
+        submitBtn.style.cssText = 'width: 150px; margin: 0 auto;';
+        submitBtn.addEventListener('click', function () {
             const titleValue = titleElem.value;
             const textValue = textElem.value;
-            // Create a submit button
-            const submitBtn = document.createElement('button');
-            submitBtn.textContent = 'Submit';
-            submitBtn.style.width = '150px';
-            submitBtn.style.margin = '0 auto';
+            const dateValue = dateElem.value;
     
-            submitBtn.addEventListener('click', function(){
-               
-
-                const newTaskItem = document.createElement('div');
-                newTaskItem.classList.add('item-task'); 
-                newTaskItem.style.backgroundColor = getRandomColor();
+            const task = {
+                title: titleValue,
+                text: textValue,
+                date: dateValue,
+            };
     
-                const titleValue = titleElem.value;
-                const textValue = textElem.value;
-                const dateValue = dateElem.value    
-
-                
-                const task = {
-                        title: titleValue,
-                        text: textValue,
-                        date: dateValue,
-                    };
-                
-                taskData.push(task);
-                
-                
-                
-                taskCounter++;
-                updateTaskCount();
-
-                appendTaskToContainer(task);
-                loadAndDisplayTodaysTasks(task);
-                
-
-                body.removeChild(overlay);
-                body.removeChild(container);
-            });
-            
-            
-            // Append elements to the container
-            container.appendChild(closeBtn);
-            container.appendChild(titleElem);
-            container.appendChild(textElem);
-            container.appendChild(dateLabel);
-            container.appendChild(dateElem);
-            container.appendChild(submitBtn);
+            taskData.push(task);
     
+            taskCounter++;
+            updateTaskCount();
     
-            // Append the container to the taskContainer
-            body.appendChild(overlay);
-            body.appendChild(container)
+            appendTaskToContainer(task);
+    
+            document.body.removeChild(overlay);
+            document.body.removeChild(container);
         });
-        
-        
+    
+        // Append elements to the container
+        container.appendChild(closeBtn);
+        container.appendChild(titleElem);
+        container.appendChild(textElem);
+        container.appendChild(dateLabel);
+        container.appendChild(dateElem);
+        container.appendChild(submitBtn);
+    
+        // Append the container to the body
+        document.body.appendChild(overlay);
+        document.body.appendChild(container);
+    }
+     
+    function loadTask() {
+        for (let i = 0; i < taskData.length; i++) {
+            appendTaskToContainer(taskData[i]);
+        }
+    }
+         const addTaskBtn = document.querySelector('.task');
+         addTaskBtn.addEventListener('click', createAddTaskModal);
+         loadTask();
+         if (taskTodayContainer) {
+            loadTodayTask(); 
+        }
          updateTaskCount();
         
     
