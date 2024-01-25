@@ -1,14 +1,15 @@
 document.addEventListener('DOMContentLoaded', function () {
     const body = document.body;
     const taskContainer = document.querySelector('.task-container');
-    //const addTaskContainer = document.querySelector('.add-task');
+    const taskTodayContainer = document.querySelector('#todayTasksContainer');
+
     const addTaskBtn = document.querySelector('.task');
     const taskCount = document.getElementById('taskCount');
 
     let taskCounter = parseInt(localStorage.getItem('taskCounter')) || 0;
     let taskData = JSON.parse(localStorage.getItem('taskData')) || [];
     
-    const textContainer = document.querySelector('.container');
+    
     
     function getRandomColor() {
             const colorsArr = [
@@ -33,22 +34,54 @@ document.addEventListener('DOMContentLoaded', function () {
             localStorage.setItem('taskData', JSON.stringify(taskData));
         }
 
-    function appendTaskToContainer(task) {
-            const newTaskItem = document.createElement('div');
-            newTaskItem.classList.add('item-task');
-            newTaskItem.style.backgroundColor = getRandomColor();
-            newTaskItem.innerHTML = `
-                <h1 class="title">${task.title}</h1>
-                <div class="text">
-                    <p>${task.text}</p>
-                </div>
-            `;
-            taskContainer.appendChild(newTaskItem);
-        }
+    
 
+        function appendTaskToContainer(task) {
+            const today = new Date();
+            let formattedToday = today.getFullYear() + '-' + 
+                                 ('0' + (today.getMonth() + 1)).slice(-2) + '-' + 
+                                 ('0' + today.getDate()).slice(-2);
+        
+            if (task.date !== formattedToday) { // Only append if it's not today's task
+                const newTaskItem = document.createElement('div');
+                newTaskItem.classList.add('item-task');
+                newTaskItem.style.backgroundColor = getRandomColor();
+                newTaskItem.innerHTML = `
+                    <h1 class="title">${task.title}</h1>
+                    <div class="text">
+                        <p>${task.text}</p>
+                    </div>
+                `;
+                taskContainer.appendChild(newTaskItem);
+            }
+        }
+        
+        function loadAndDisplayTodaysTasks(task) {
+            const today = new Date();
+            let formattedToday = today.getFullYear() + '-' + 
+                                   ('0' + (today.getMonth() + 1)).slice(-2) + '-' + 
+                                   ('0' + today.getDate()).slice(-2);
+        
+            if (task.date === formattedToday) {
+                    const newTaskItem = document.createElement('div');
+                    newTaskItem.classList.add('item-task');
+                    newTaskItem.style.backgroundColor = getRandomColor();
+                    newTaskItem.innerHTML = `
+                        <h1 class="title">${task.title}</h1>
+                        <div class="text">
+                            <p>${task.text}</p>
+                        </div>
+                    `;
+                    console.log(newTaskItem);
+                    taskTodayContainer.appendChild(newTaskItem);
+            }
+        }
+        
+    
     for (let i = 0; i < taskData.length; i++) {
             appendTaskToContainer(taskData[i]);
-        }
+            loadAndDisplayTodaysTasks(taskData[i]);
+    }
 
     addTaskBtn.addEventListener('click', function () {
             const overlay = document.createElement('div');
@@ -100,7 +133,7 @@ document.addEventListener('DOMContentLoaded', function () {
             dateLabel.textContent = 'Optional';
             const dateElem = document.createElement('input');
             dateElem.type = 'date';
-            dateElem.id = '#date';
+            dateElem.id = 'date';
     
             const titleValue = titleElem.value;
             const textValue = textElem.value;
@@ -128,31 +161,17 @@ document.addEventListener('DOMContentLoaded', function () {
                         date: dateValue,
                     };
                 
-                //appendTaskToUpcoming(task);
-            
-                
-                
                 taskData.push(task);
                 
-                for(let i = 0; i< taskCounter;i++) {
-                    newTaskItem.innerHTML = `
-                    <h1 class="title">${taskData[i].title}</h1>
-                    <div class="text">
-                        <p>${taskData[i].text}</p>
-                    </div>
-                `;
-                }
+                
                 
                 taskCounter++;
                 updateTaskCount();
 
                 appendTaskToContainer(task);
-                // Append the new task item to the taskContainer
-                taskContainer.append(newTaskItem);
-    
+                loadAndDisplayTodaysTasks(task);
                 
-    
-                // Remove the overlay and container when submit button is clicked
+
                 body.removeChild(overlay);
                 body.removeChild(container);
             });
@@ -171,7 +190,10 @@ document.addEventListener('DOMContentLoaded', function () {
             body.appendChild(overlay);
             body.appendChild(container)
         });
+        
+        
          updateTaskCount();
+        
     
 
 
